@@ -3,7 +3,7 @@ class CustomRoute extends sfRequestRoute {
 
   const DEFAULT_SECRET_KEY = "abcdef";
 
-  public function matchesUrl($url, $context) {
+  public function matchesUrl($url, $context = array()) {
     $parameters = parent::matchesUrl($url, $context);
     if (!$parameters) {
       return false;

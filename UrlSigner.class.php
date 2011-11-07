@@ -3,7 +3,6 @@ class UrlSigner {
 
   public function redirectIfUrlIsNotSigned($parameters, $context, $secretKey) {
     if (!is_array($parameters) || !array_key_exists("signature_value", $parameters)) {
-      error_log(print_r($parameters,true));
       $this->urlIsNotProperlySigned($context);
       return false;
     }
