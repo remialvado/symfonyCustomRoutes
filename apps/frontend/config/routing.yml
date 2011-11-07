@@ -1,0 +1,16 @@
+# You can find more information about this file on the symfony website:
+# http://www.symfony-project.org/reference/1_4/en/10-Routing
+
+homepage:
+  url:   /
+  class:  CustomRoute
+  param: { module: demo, action: index }
+
+demoSignedUrl:
+  url:   /signedUrl
+  class:  CustomRoute
+  param: { module: demo, action: signed }
+  requirements:
+    secure: 
+      status: enabled
+      secretKey: abcdefg

@@ -1,0 +1,197 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!-- PROJECT DESCRIPTION SECTION -->
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.bom.fe</groupId>
+	<artifactId>symfonyCustomRoutes</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>symfonyCustomRoutes</name>
+	<description>Simple lib with custom route</description>
+
+    <parent>
+        <groupId>com.bom.fe.commons</groupId>
+        <artifactId>frontendParent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <!-- SCM SECTION -->
+    <scm>
+      <connection>scm:svn:https://svn.bestofmedia.com/sfportal-repository/trunk</connection>
+    </scm>
+
+    <properties>
+      <sonar.phpcpd.reportFileRelativePath>/</sonar.phpcpd.reportFileRelativePath>
+
+      <sonar.phpUnit.shouldRun>false</sonar.phpUnit.shouldRun>
+      <sonar.phpUnit.coverage.shouldRun>false</sonar.phpUnit.coverage.shouldRun>
+      <sonar.php.phpCodesniffer.shouldRun>false</sonar.php.phpCodesniffer.shouldRun>
+
+      <sonar.phpCodesniffer.standardArgument>Generic,Internal,MySource,PEAR,Squiz,Zend</sonar.phpCodesniffer.standardArgument>
+      
+      <!--sonar.php.phpDepend.shouldRun>true</sonar.php.phpDepend.shouldRun>
+      <sonar.php.phpPmd.shouldRun>true</sonar.php.phpPmd.shouldRun>
+      <sonar.host.connect.timeout.miliseconds>600000</sonar.host.connect.timeout.miliseconds>
+      <sonar.host.read.timeout.miliseconds>3600000</sonar.host.read.timeout.miliseconds>
+      <sonar.phpcpd.shouldRun>false</sonar.phpcpd.shouldRun-->
+
+      <!-- to enable mutliple source directories. The phase must patch with the build-helper-maven-plugin exectution phase -->
+<!--      <sonar.phase>generate-sources</sonar.phase>-->
+    </properties>
+
+    <build>
+    <sourceDirectory>apps</sourceDirectory>
+    <testSourceDirectory>test/unit</testSourceDirectory>
+
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <!--version>LATEST</version-->
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>apps</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>unix-maven-plugin</artifactId>
+        <version>1.0-alpha-5.1-patchBoM3</version>
+        <extensions>true</extensions>
+        <configuration>
+          <deb>
+            <section>devel</section>
+            <priority>standard</priority>
+          </deb>
+          <name>bom-${project.artifactId}-${project.version}</name>
+          <contact>Community team &lt;lcommunity@bestofmedia.com&gt;</contact>
+          <contactEmail>community@bestofmedia.com</contactEmail>
+          <assembly>
+            <mkdirs>
+              <paths>
+                <path>${destination.path}/log</path>
+                <path>${destination.path}/cache</path>
+              </paths>
+              <attributes>
+                <user>devel</user>
+                <group>devel</group>
+                <mode>0777</mode>
+              </attributes>
+            </mkdirs>
+            <extractFile>
+              <archive>${project.basedir}/symfony</archive>
+              <to>${destination.path}/symfony</to>
+            </extractFile>
+            <copyDirectory>
+              <from>${project.basedir}/apps</from>
+              <to>${destination.path}/apps</to>
+            </copyDirectory>
+            <copyDirectory>
+              <from>${project.basedir}/lib</from>
+              <to>${destination.path}/lib</to>
+            </copyDirectory>
+            <copyDirectory>
+              <from>${project.basedir}/web</from>
+              <to>${destination.path}/web</to>
+            </copyDirectory>
+            <copyDirectory>
+              <from>${project.basedir}/config</from>
+              <to>${destination.path}/config</to>
+            </copyDirectory>
+            <copyDirectory>
+              <from>${project.basedir}/data</from>
+              <to>${destination.path}/data</to>
+            </copyDirectory>
+            <copyDirectory>
+              <from>${project.basedir}/packaging</from>
+              <to>${destination.path}/packaging</to>
+            </copyDirectory>
+          </assembly>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2</version>
+        <executions>
+          <execution>
+            <id>symfony cc</id>
+            <phase>test</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>symfony</executable>
+              <arguments>
+                <argument>--quiet</argument>
+                <argument>cc</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>phpunit</id>
+            <phase>test</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>phpunit</executable>
+              <arguments>
+                <argument>--configuration=${project.basedir}/test/unit/configuration.xml</argument>
+                <argument>--log-junit=${project.basedir}/log/test/unit.xml</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>dev-repo</name>
+            <url>http://ci.bestofmedia.com:8180/artifactory/dev-repo</url>
+        </repository>
+        <repository>
+            <snapshots />
+            <id>snapshots</id>
+            <name>dev-repo</name>
+            <url>http://ci.bestofmedia.com:8180/artifactory/dev-repo</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>bom-ci-hudson.bestofmedia.com</id>
+            <name>bom-ci-hudson.bestofmedia.com-releases</name>
+            <url>http://ci.bestofmedia.com:8180/artifactory/plugins-releases-local</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>org.codehaus.mojo</id>
+            <name>Repository for org.codehaus.mojo</name>
+            <url>http://repository.codehaus.org/org/codehaus/mojo/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven</name>
+            <url>http://download.java.net/maven/2/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>

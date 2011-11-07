@@ -1,0 +1,12 @@
+<phpunit
+	bootstrap="../bootstrap/unit.php"
+>
+  <testsuites>
+    <testsuite name="genericTestSuite">
+      <directory>.</directory>
+    </testsuite>
+  </testsuites>
+  <logging>
+    <log type="junit" target="../../log/test/unit.xml" logIncompleteSkipped="false"/>
+  </logging>
+</phpunit>
