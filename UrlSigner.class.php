@@ -10,6 +10,7 @@ class UrlSigner {
     $signatureValue = $parameters["signature_value"];
     $signature = $this->computeSignatureValue($parameters, $secretKey);
     if ($signatureValue != $signature) {
+      error_log("Expected signature : '$signature' & Signature : '$signatureValue'");
       $this->urlIsNotProperlySigned($context);
       return false;
     }
